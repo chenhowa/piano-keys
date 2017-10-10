@@ -8,48 +8,54 @@
  * by the actual width of the viewport. How can I add that functionality?
  *
  *
+ * NEXT TIME. SET UP UNIT TESTS FOR THIS CLASS
+ *
  */
 
 import { Component } from '@angular/core';
-import { Keys } from './keys';
+import { Key } from './keys';
+import { OnInit } from '@angular/core';
 
 @Component({
     selector: 'piano-keys',
     template: `
         <h1>Let's play!</h1>
         <svg [attr.viewBox]="box">
-            <g *ngFor="let key of keys">
-                <polygon points={{"0,100 0,200 60,90 50,30"}} />
+            <g *ngFor="let key of keys; let i=index">
+                <polygon [attr.points]="generateKey(key)"
+                [attr.transform]="renderKey(i)"/>
             </g>
         </svg>
     `,
-    providers: [ Keys ],
 })
-export class PianoKeys {
-    constructor(private keyService: Keys) {   }
+export class PianoKeys implements OnInit {
     private keys: string[] = KEYS;
     private box: string = "0 0 250 250";
-    generateKey(key: string): number[] {
-        key = key.toLowerCase();
-        switch(key) {
-            //provide normalized key polygons that are all 1 unit high
-            case 'a': return this.keyService.bothAccentLeft(); 
-            case 'b': return this.keyService.oneAccentLeft();
-            case 'c': return this.keyService.oneAccentRight();
-            case 'd': return this.keyService.bothAccentEqual();
-            case 'e': return this.keyService.oneAccentLeft();
-            case 'f': return this.keyService.oneAccentRight();
-            case 'g': return this.keyService.bothAccentRight();
-        }
-    }
-    scaleKey(key: number[]): string {
-        return 'hi';
-    }
-    renderKey(key: string): string {
+    private height: number = HEIGHT;
+    private width: number = WIDTH;
 
-        return this.scaleKey( this.generateKey(key) );
+    ngOnInit(): void {
+
     }
+
+    generateKey(key: string): string {
+        let keyObj = new Key(key);
+        return keyObj.asSvg();
+    }
+
+    renderKey(index: number): string {
+        let num = 0.6 * index;
+        return "scale(50 50) translate(" + num + ")";
+    }
+
+
 
 }
 
-const KEYS = ['a', 'b', 'c', 'd', 'e', 'f', 'g'];
+const HEIGHT = 250;
+const WIDTH = 500;
+const KEYS = [
+    'a', 'a#', 'b', 'c', 'c#',
+    'd', 'd#', 'e', 'f', 'f#',
+    'g', 'g#'
+];
