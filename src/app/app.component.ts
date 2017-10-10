@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { PianoKeys } from './piano-keys.component';
 
 @Component({
   selector: 'app-root',
